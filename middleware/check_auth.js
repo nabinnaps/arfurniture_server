@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
     const tokenWithoutBearer = token.replace('Bearer ', '');
 
     // Verify the token using the secret key (process.env.ACCESS_TOKEN_SECRET)
-    const decodedToken = jwt.verify(tokenWithoutBearer, process.env.ACCESS_TOKEN_SECRET);
+    const decodedToken = jwt.verify(tokenWithoutBearer, "sdasdxcdsdcd");
 
     // Attach the user ID from the decoded token to the request object for future use
     req.userId = decodedToken.id;
