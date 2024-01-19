@@ -1,8 +1,12 @@
 const User = require('../../models/user_model/user.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const sendMail = require('../../helpers/send_mail.js');
+const OTP=require('../otp_controller/otp_controller.js')
+let refreshTokens = [];
 
 exports.register = async (req, res) => {
+  
   try {
     if (!req.body) {
       res.status(400).send({ message: 'Content can not be empty!' });
@@ -17,8 +21,7 @@ exports.register = async (req, res) => {
       res.status(409).json({ status: false, message: 'User with this email already exists.' });
       return;
     }
-
-    // Create a new User instance
+  
     const newUser = new User({
       username: username,
       email: email,
@@ -51,8 +54,7 @@ exports.login = async (req, res) => {
       return;
     }
 
-
-    // // Compare the provided password with the hashed password in the database
+    // Compare the provided password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
@@ -60,27 +62,23 @@ exports.login = async (req, res) => {
       return;
     }
 
-
     function generateAccessToken(userData) {
-      // The user data is encoded into the token
-      // Replace 'YOUR_SECRET_KEY' with your actual secret key used to sign the token
-      const token = jwt.sign(userData, 'sdasdxcdsdcd', { expiresIn: '1d' });
+      const token = jwt.sign(userData, 'sdasdxcdsdcd', { expiresIn: '30s' });
       return token;
     }
-    // // Generate an access token
+
+    function generateRefreshToken(userId) {
+      const refreshToken = jwt.sign({ userId }, 'nasdbsdnhhsadsadsad', { expiresIn: '1d' });
+      refreshTokens.push(refreshToken);
+      return refreshToken;
+    }
+
     const accessToken = generateAccessToken({
       id: user.id,
       email: user.email,
       // Include other fields as needed
     });
-    function generateRefreshToken(userId) {
-      // Generate a refresh token using userId
-      // Replace 'YOUR_REFRESH_SECRET_KEY' with your actual refresh token secret key
-      const refreshToken = jwt.sign({ userId }, 'nasdbsdnhhsadsadsad');
-      return refreshToken;
-    }
 
-    // Generate a refresh token (can be a random string or JWT with longer expiry)
     const refreshToken = generateRefreshToken(user.id);
 
     res.json({
@@ -94,9 +92,26 @@ exports.login = async (req, res) => {
     res.status(500).json({ status: false, message: 'Some error occurred while logging in.' });
   }
 };
-// Other controller methods (getLoggedInUser, getAllUsers, getUserById, updateUser, forgetpassword, resetPassword) can be similarly updated to use the Prisma-based User model.
+
+exports.renewtoken = async (req, res) => {
+  const refreshToken = req.body.token;
+
+  if (!refreshToken || !refreshTokens.includes(refreshToken)) {
+    return res.status(403).json({ message: 'User not authenticated' });
+  }
+
+  jwt.verify(refreshToken, 'nasdbsdnhhsadsadsad', (err, user) => {
+    if (!err) {
+      const accessToken = jwt.sign({username:user.username}, 'sdasdxcdsdcd', { expiresIn: '30s' });
+      return res.status(201).json({ accessToken });
+    } else {
+      return res.status(403).json({ message: 'User not authenticated' });
+    }
+  });
+};
 
 
+exports.otp = async (req, res) => {
 
 
-
+};
