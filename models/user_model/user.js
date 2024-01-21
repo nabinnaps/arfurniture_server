@@ -74,7 +74,7 @@ class User {
     try {
       const user = await prisma.user.findUnique({
         where: {
-          id: id,
+          id: parseInt(id),
         },
       });
       return user;
@@ -88,7 +88,7 @@ class User {
     try {
       const user = await prisma.user.update({
         where: {
-          id: updatedUser.id,
+          id: parseInt(updatedUser.id),
         },
         data: {
           username: updatedUser.username,

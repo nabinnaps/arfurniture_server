@@ -1,9 +1,10 @@
 const express=require('express');
 const router=express.Router();
 const user_controller=require('../../controllers/user_controller/user_controller');
+const otp_controller=require('../../controllers/otp_controller/otp_controller');
 const multer = require('multer');
 const path = require('path');
-const checkAuth = require('../../middleware/check_auth');
+const auth = require('../../middleware/check_auth');
 
 
 //! Use of Multer
@@ -29,8 +30,21 @@ var storage = multer.diskStorage({
 //   //   res.json(insert);
 // });
 
+
+// function auth(){
+//   let token =req.headers['authorization'] ;
+//   token =token.split(' ')[1];
+//   j
+
+// }
 router.post('/register',user_controller.register);
+router.post('/sendOtp',otp_controller.registerWithOTP);
 router.post('/login',user_controller.login);
+router.post('/newrefereshtoken',user_controller.renewtoken);
+router.post('/newrefereshtoken',user_controller.renewtoken);
+router.get('/protected',auth,(req,res)=>{
+  res.send("Inside protected route");
+});
 
 // // Add the route for getting all registered users 
 // router.get('/users', checkAuth, user_controller.getAllUsers);
