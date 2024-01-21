@@ -7,7 +7,7 @@ const auth = require('../../middleware/check_auth');
 
 var storage = multer.diskStorage({
   destination: (req, file, callBack) => {
-    callBack(null, './assets/images/');
+    callBack(null, './assets/images/products/');
   },
   filename: (req, file, callBack) => {
     callBack(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
@@ -21,10 +21,10 @@ var upload = multer({
   },
 });
 
-router.post('/product-create', auth, upload.single('image'), productController.createProduct);
+router.post('/product', auth, upload.single('image'), productController.createProduct);
 router.get('/product/:id', auth, productController.getProductById);
 router.patch('/product/:id', auth, upload.single('image'), productController.updateProduct);
 router.delete('/product/:id', auth, productController.deleteProduct);
-router.get('/products', productController.getAllProducts);
+router.get('/', productController.getAllProducts);
 
 module.exports = router;
