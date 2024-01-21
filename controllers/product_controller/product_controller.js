@@ -6,8 +6,16 @@ exports.createProduct = async (req, res) => {
       res.status(400).send({ message: 'Content can not be empty!' });
       return;
     }
+    if (!req.file) {
+      res.status(400).send({
+        message: "File upload is missing!",
+      });
+      return;
+    }
+    const image=req.file.filename;
 
-    const { productName, description, price, size, categoryId, quantityAvailable, image } = req.body;
+
+    const { productName, description, price, size, categoryId, quantityAvailable} = req.body;
     const categoryIdAsInt = parseInt(categoryId);
     const newProduct = new Product({
       productName: productName,
