@@ -14,7 +14,7 @@ exports.createCartItem = async (req, res) => {
         }
     
         // Check if the user has a cart
-        let cart = await Cart.findById(userId);
+        let cart = await Cart.findUserById(userId);
     
         // If the user doesn't have a cart, create a new one
         if (!cart) {
@@ -42,7 +42,7 @@ exports.createCartItem = async (req, res) => {
 exports.getCartItemById = async (req, res) => {
   try {
     const cartItemId = req.params.id;
-    const cartItem = await CartItem.findById(cartItemId);
+    const cartItem = await Cart.findById(cartItemId);
 
     if (!cartItem) {
       res.status(404).json({ status: false, message: 'Cart item not found with the provided ID.' });

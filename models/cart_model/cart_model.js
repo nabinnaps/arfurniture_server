@@ -39,22 +39,38 @@ class Cart {
       throw err;
     }
   }
-  static async findById(cartId) {
+  static async findUserById(userID) {
     try {
-      const cart = await prisma.cart.findUnique({
+      const cart = await prisma.cart.findFirst({
         where: {
-          id: parseInt(cartId),
+          userId: parseInt(userID),
+        },
+      });
+      return new Cart(cart);
+    } catch (err) {
+      console.error('Error getting users details: ', err);
+      throw err;
+    }
+  }
+  static async findById(userID) {
+    try {
+      const cart = await prisma.cart.findFirst({
+        where: {
+          userId: parseInt(userID),
+        },
+      });
+
+      const cartItem = await prisma.cart.findFirst({
+        where: {
+          id: parseInt(cart.id),
         },
         include: {
           cartItems: true,
         },
       });
 
-      if (!cart) {
-        return null;
-      }
 
-      return new Cart(cart);
+      return cartItem;
     } catch (err) {
       console.error('Error getting cart details: ', err);
       throw err;

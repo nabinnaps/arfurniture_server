@@ -24,7 +24,7 @@ class Product {
           price: newProduct.price,
           size: newProduct.size,
           categoryId: newProduct.categoryId,
-          quantityAvailable: newProduct.quantityAvailable,
+          quantityAvailable: parseInt(newProduct.quantityAvailable),
           image: newProduct.image,
           createdAt: new Date(),
           updatedAt: new Date(),
